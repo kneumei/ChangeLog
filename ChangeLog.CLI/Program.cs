@@ -94,7 +94,7 @@ namespace ChangeLog.CLI
 				{
 					new SemVer.Version(value);
 				}
-				catch (ArgumentException ex)
+				catch (ArgumentException)
 				{
 					return new ValidationResult($"The value for --{option.LongName} must be a valid Semantic Version");
 				}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using ChangeLog.Core.Models;
@@ -39,9 +40,30 @@ namespace ChangeLog.Core.Services
 
 		public async Task<List<PullRequest>> GetPullRequests()
 		{
-			var response = await _client.GetAsync($"/repos/{_settings.GithubProjectPath}/pulls?state=closed", HttpCompletionOption.ResponseHeadersRead);
+			var allPullRequests = new List<PullRequest>();
+			for (int page = 0; page < 3; page++)
+			{
+				var pullRequestsFromPage = await GetPullRequests(page);
+				allPullRequests.AddRange(pullRequestsFromPage);
+			}
+			return allPullRequests;
+		}
+
+		private async Task<List<PullRequest>> GetPullRequests(int page)
+		{
+			var url = $"/repos/{_settings.GithubProjectPath}/pulls?state=closed&per_page=100&page={page}";
+			var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 			response.EnsureSuccessStatusCode();
-			return _serializer.ReadObject(await response.Content.ReadAsStreamAsync()) as List<PullRequest>;
+			var content = await response.Content.ReadAsStringAsync();
+			try
+			{
+				return _serializer.ReadObject(await response.Content.ReadAsStreamAsync()) as List<PullRequest>;
+			}
+			catch (SerializationException ex)
+			{
+				throw;
+			}
+
 		}
 
 	}

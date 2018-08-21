@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.Serialization; 
+using System.Runtime.Serialization;
 
 namespace ChangeLog.Core.Models
 {
@@ -26,7 +26,10 @@ namespace ChangeLog.Core.Models
 		public string MergeCommitSha { get; set; }
 
 		[DataMember(Name = "labels")]
-		public List<string> Labels { get; set; }
+		public List<PullRequestLabel> Labels { get; set; }
+
+		[DataMember(Name = "user")]
+		public PullRequestUser User { get; set; }
 
 		[IgnoreDataMember]
 		public DateTime MergedAt
@@ -38,5 +41,5 @@ namespace ChangeLog.Core.Models
 		}
 
 
-	}	
+	}
 }
