@@ -55,7 +55,7 @@ namespace ChangeLog.Core.Services
 			{
 				var previouscount = page * requestsPerPage;
 				var perPage = Math.Min(requestsPerPage, lookbackNumber - previouscount);
-				var pullRequestsFromPage = await GetPullRequests(page, perPage);
+				var pullRequestsFromPage = await GetPullRequests(page + 1, perPage);
 				allPullRequests.AddRange(pullRequestsFromPage);
 			}
 			return allPullRequests;
