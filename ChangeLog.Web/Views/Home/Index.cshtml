@@ -5,33 +5,35 @@
 @{ 
 	var title = "Galileo Release Notes";
 	var rangeSpecified = false;
+	var versionRange = "";
 	if(Model.BeginVersion !=null && Model.EndVersion!=null){
-		title += $" {Model.BeginVersion.ToString()}-{Model.EndVersion.ToString()}";
+		title += $" {versionRange}";
 		rangeSpecified = true;
+		versionRange= $"{Model.BeginVersion.ToString()} - {Model.EndVersion.ToString()}";
 	}
 	ViewData["Title"] = title;
 	 
 }
 
-@if(!rangeSpecified){
-	<h1>Please specify Range</h1>
-}
+<h1>Galileo Change Log @versionRange</h1>
+<hr>
 
-
+<form action="/" method="get">
+   <input name="beginVersion" type="text" value="@Model.BeginVersion?.ToString()" />
+   <input name="endVersion" type="text" value="@Model.EndVersion?.ToString()" />
+   <input type="submit" id="submit" value="Submit" />
+</form>
 
 @if(rangeSpecified){
 	var versionGroups = Model.Commits
 		.GroupBy(c => c.Version);
 	var versionKeys = versionGroups.Select(g => g.Key).OrderByDescending(v => v);
-
-	<h1>Change Log @Model.BeginVersion.ToString() - @Model.EndVersion.ToString()</h1>
-	<hr>
 	@foreach(var version in versionKeys){
-		<h2>@version.ToString()</h2>
-		<ul>
-			@foreach(var pr in versionGroups.Single(g => g.Key == version)){
-				<li><a href="@pr.Url">#@pr.PullRequestNumber</a> (@pr.Author) - @pr.Title</li>
-			}
-		</ul>
-	}
+	<h2>@version.ToString()</h2>
+	<ul>
+		@foreach(var pr in versionGroups.Single(g => g.Key == version)){
+			<li><a href="@pr.Url">#@pr.PullRequestNumber</a> (@pr.Author) - @pr.Title</li>
+		}
+	</ul>
+}
 }
