@@ -8,6 +8,6 @@ namespace ChangeLog.Core.Models
 	public class PullRequestUser
 	{
 		[DataMember(Name = "login")]
-		public string login { get; set; }
+		public string Login { get; set; }
 	}
 }

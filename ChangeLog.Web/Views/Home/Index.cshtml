@@ -13,6 +13,12 @@
 	 
 }
 
+@if(!rangeSpecified){
+	<h1>Please specify Range</h1>
+}
+
+
+
 @if(rangeSpecified){
 	var versionGroups = Model.Commits
 		.GroupBy(c => c.Version);
@@ -24,10 +30,8 @@
 		<h2>@version.ToString()</h2>
 		<ul>
 			@foreach(var pr in versionGroups.Single(g => g.Key == version)){
-				<li>#@pr.PullRequestNumber (@pr.Author) - @pr.Title</li>
+				<li><a href="@pr.Url">#@pr.PullRequestNumber</a> (@pr.Author) - @pr.Title</li>
 			}
 		</ul>
 	}
-}else{
-	<h1>Please specify Range</h1>
 }

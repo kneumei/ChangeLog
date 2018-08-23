@@ -31,6 +31,12 @@ namespace ChangeLog.Core.Models
 		[DataMember(Name = "user")]
 		public PullRequestUser User { get; set; }
 
+		[DataMember(Name = "html_url")]
+		public string Url { get; set; }
+
+		[DataMember(Name = "body")]
+		public string Body { get; set; }
+
 		[IgnoreDataMember]
 		public DateTime MergedAt
 		{

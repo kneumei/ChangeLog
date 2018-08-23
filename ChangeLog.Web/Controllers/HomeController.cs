@@ -46,8 +46,9 @@ namespace ChangeLog.Web.Controllers
 					{
 						Version = c.Tags.Min(),
 						Title = c.PullRequest.Title,
-						Author = c.PullRequest.User.login,
-						PullRequestNumber = c.PullRequest.Number.ToString()
+						Author = c.PullRequest.User.Login,
+						PullRequestNumber = c.PullRequest.Number.ToString(),
+						Url = c.PullRequest.Url
 					})
 					.ToList();
 
