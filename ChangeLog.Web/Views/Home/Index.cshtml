@@ -1,3 +1,33 @@
-<div>
-	<h1>OMG</h1>
-</div>
+@using System.Linq;
+
+@model ChangeLog.Web.Models.HomeViewModel 
+
+@{ 
+	var title = "Galileo Release Notes";
+	var rangeSpecified = false;
+	if(Model.BeginVersion !=null && Model.EndVersion!=null){
+		title += $" {Model.BeginVersion.ToString()}-{Model.EndVersion.ToString()}";
+		rangeSpecified = true;
+	}
+	ViewData["Title"] = title;
+	 
+}
+
+@if(rangeSpecified){
+	var versionGroups = Model.Commits
+		.GroupBy(c => c.Version);
+	var versionKeys = versionGroups.Select(g => g.Key).OrderByDescending(v => v);
+
+	<h1>Change Log @Model.BeginVersion.ToString() - @Model.EndVersion.ToString()</h1>
+	<hr>
+	@foreach(var version in versionKeys){
+		<h2>@version.ToString()</h2>
+		<ul>
+			@foreach(var pr in versionGroups.Single(g => g.Key == version)){
+				<li>#@pr.PullRequestNumber (@pr.Author) - @pr.Title</li>
+			}
+		</ul>
+	}
+}else{
+	<h1>Please specify Range</h1>
+}
