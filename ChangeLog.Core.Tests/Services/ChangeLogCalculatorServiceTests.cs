@@ -32,9 +32,9 @@ namespace ChangeLog.Core.Tests.Services
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog(new Version("1.0.0"), new Version("1.0.1"));
+			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1");
 
-			Assert.Empty( changeLog);
+			Assert.Empty(changeLog);
 		}
 
 		[Fact]
@@ -44,11 +44,10 @@ namespace ChangeLog.Core.Tests.Services
 				new []{"1.0.0", "1.0.1", "1.1.0", "1.1.1"},
 				new []{"1.0.1", "1.1.0", "1.1.1"},
 			};
-			_repository.Commits.AddRange( versions.Select(GenerateCommit).ToList());
+			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog(new Version("1.0.0"), new Version("1.0.1"));
+			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1");
 
-			Assert.Equal(1, changeLog.Count);
 			Assert.Equal(1001, changeLog.Single().PullRequest.Number);
 		}
 
@@ -60,12 +59,11 @@ namespace ChangeLog.Core.Tests.Services
 				new []{"1.0.1", "1.1.0", "1.1.1"},
 				new []{"1.1.0", "1.1.1"},
 			};
-			_repository.Commits.AddRange( versions.Select(GenerateCommit).ToList());
+			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog(new Version("1.0.0"), new Version("1.0.1"));
+			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1").Single();
 
-			Assert.Equal(1, changeLog.Count);
-			Assert.Equal(1001, changeLog.Single().PullRequest.Number);
+			Assert.Equal(1001, changeLog.PullRequest.Number);
 		}
 
 		[Fact]
@@ -79,7 +77,7 @@ namespace ChangeLog.Core.Tests.Services
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog(new Version("1.0.0"), new Version("1.1.1"))
+			var changeLog = _service.CalculateChangeLog("1.0.0", "1.1.1")
 				.OrderBy(c => c.PullRequest.Number)
 				.ToList();
 
@@ -99,6 +97,22 @@ namespace ChangeLog.Core.Tests.Services
 				Title = $"#{number}"
 			};
 			return new ChangeLogCommit(pr, versions.ToList());
+		}
+	}
+
+	class InMemoryChangeLogRepository : IChangeLogRepository
+	{
+
+		public List<ChangeLogCommit> Commits = new List<ChangeLogCommit>();
+
+		public List<ChangeLogCommit> GetAllCommits()
+		{
+			return Commits;
+		}
+
+		public List<Version> GetAllVersions()
+		{
+			return Commits.SelectMany(c => c.Tags).Distinct().ToList();
 		}
 	}
 }

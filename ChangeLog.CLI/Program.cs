@@ -69,14 +69,13 @@ namespace ChangeLog.CLI
 
 			var githubService = new GithubService(githubSettings);
 			var gitService = new GitService(gitSettings);
-			var repository = new InMemoryChangeLogRepository();
+			var repository = new DirectAccessChangeLogRepository(githubService, gitService);
+
+			await repository.Initialize();
+
 			var changeLogCalculator = new ChangeLogCalculatorService(repository);
 
-			var prs = await githubService.GetPullRequests();
-			var commits = gitService.GetChangeLogCommits(prs);
-			repository.Commits.AddRange(commits);
-
-			var changeLogs = changeLogCalculator.CalculateChangeLog(new SemVer.Version(beginningVersion), new SemVer.Version(endingVersion));
+			var changeLogs = changeLogCalculator.CalculateChangeLog(beginningVersion, endingVersion);
 			foreach (var log in changeLogs)
 			{
 				Console.WriteLine($"{log.PullRequest.Title} ({log.Tags.Min()})");

@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using ChangeLog.Core.Models;
 using ChangeLog.Core.Settings;
+using Microsoft.Extensions.Options;
 
 namespace ChangeLog.Core.Services
 {
 
-	interface IGitService
+	public interface IGitService
 	{
 		List<ChangeLogCommit> GetChangeLogCommits(List<PullRequest> pullRequests);
 	}
@@ -16,6 +17,11 @@ namespace ChangeLog.Core.Services
 	public class GitService : IGitService
 	{
 		private readonly GitSettings _settings;
+
+		public GitService(IOptions<GitSettings> settings) : this(settings.Value)
+		{
+
+		}
 		public GitService(GitSettings settings)
 		{
 			_settings = settings;

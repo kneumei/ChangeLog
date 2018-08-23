@@ -4,5 +4,6 @@ namespace ChangeLog.Core.Settings
 	{
 		public string GithubProjectPath { get; set; }
 		public string GithubApiToken { get; set; }
+		public int GithubPullRequestLookbackNumber { get; set; }
 	}
 }

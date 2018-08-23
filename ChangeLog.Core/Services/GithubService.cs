@@ -8,11 +8,12 @@ using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using ChangeLog.Core.Models;
 using ChangeLog.Core.Settings;
+using Microsoft.Extensions.Options;
 
 namespace ChangeLog.Core.Services
 {
 
-	interface IGithubService
+	public interface IGithubService
 	{
 		Task<List<PullRequest>> GetPullRequests();
 	}
@@ -23,6 +24,10 @@ namespace ChangeLog.Core.Services
 		private HttpClient _client;
 		private DataContractJsonSerializer _serializer;
 		private readonly GithubSettings _settings;
+
+		public GithubService(IOptions<GithubSettings> settings) : this(settings.Value)
+		{
+		}
 
 		public GithubService(GithubSettings settings)
 		{
@@ -40,18 +45,25 @@ namespace ChangeLog.Core.Services
 
 		public async Task<List<PullRequest>> GetPullRequests()
 		{
+
+			int lookbackNumber = Math.Max(1, _settings.GithubPullRequestLookbackNumber);
+			int requestsPerPage = 50;
+			int numberRequests = (int)Math.Ceiling((decimal)lookbackNumber / (decimal)requestsPerPage);
+
 			var allPullRequests = new List<PullRequest>();
-			for (int page = 0; page < 3; page++)
+			for (int page = 0; page < numberRequests; page++)
 			{
-				var pullRequestsFromPage = await GetPullRequests(page);
+				var previouscount = page * requestsPerPage;
+				var perPage = Math.Min(requestsPerPage, lookbackNumber - previouscount);
+				var pullRequestsFromPage = await GetPullRequests(page, perPage);
 				allPullRequests.AddRange(pullRequestsFromPage);
 			}
 			return allPullRequests;
 		}
 
-		private async Task<List<PullRequest>> GetPullRequests(int page)
+		private async Task<List<PullRequest>> GetPullRequests(int page, int perPage)
 		{
-			var url = $"/repos/{_settings.GithubProjectPath}/pulls?state=closed&per_page=100&page={page}";
+			var url = $"/repos/{_settings.GithubProjectPath}/pulls?state=closed&per_page={perPage}&page={page}";
 			var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 			response.EnsureSuccessStatusCode();
 			var content = await response.Content.ReadAsStringAsync();
@@ -59,7 +71,7 @@ namespace ChangeLog.Core.Services
 			{
 				return _serializer.ReadObject(await response.Content.ReadAsStreamAsync()) as List<PullRequest>;
 			}
-			catch (SerializationException ex)
+			catch (SerializationException)
 			{
 				throw;
 			}
