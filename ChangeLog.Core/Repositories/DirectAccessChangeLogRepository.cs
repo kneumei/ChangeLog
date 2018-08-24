@@ -43,7 +43,7 @@ namespace ChangeLog.Core.Repositories
 			{
 				throw new InvalidOperationException($"{nameof(DirectAccessChangeLogRepository)} has not been initialized");
 			}
-			return _commits.SelectMany(c => c.Tags).Distinct().ToList();
+			return _commits.SelectMany(c => c.Versions).Distinct().ToList();
 		}
 
 		public Task PersistAsync(List<ChangeLogCommit> commits)

@@ -41,10 +41,10 @@ namespace ChangeLog.Web.Controllers
 			{
 				commits = _calculatorService
 					.CalculateChangeLog(beginSemVer.ToString(), endSemVer.ToString())
-					.OrderByDescending(c => c.Tags.Min())
+					.OrderByDescending(c => c.Versions.Min())
 					.Select(c => new ChangeLogViewModel()
 					{
-						Version = c.Tags.Min(),
+						Version = c.Versions.Min(),
 						Title = c.PullRequest.Title,
 						Author = c.PullRequest.User.Login,
 						PullRequestNumber = c.PullRequest.Number.ToString(),

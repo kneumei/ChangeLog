@@ -113,7 +113,7 @@ namespace ChangeLog.Core.Tests.Services
 
 		public List<Version> GetAllVersions()
 		{
-			return Commits.SelectMany(c => c.Tags).Distinct().ToList();
+			return Commits.SelectMany(c => c.Versions).Distinct().ToList();
 		}
 
 		public Task PersistAsync(List<ChangeLogCommit> commits)

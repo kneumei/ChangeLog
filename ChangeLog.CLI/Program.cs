@@ -84,7 +84,7 @@ namespace ChangeLog.CLI
 			var changeLogs = new List<ChangeLogCommit>() { changeLog };
 			foreach (var log in changeLogs)
 			{
-				Console.WriteLine($"{log.PullRequest.Title} ({log.Tags.Min()})");
+				Console.WriteLine($"{log.PullRequest.Title} ({log.Versions.Min()})");
 
 			}
 			await cosmos.PersistAsync(changeLogs);

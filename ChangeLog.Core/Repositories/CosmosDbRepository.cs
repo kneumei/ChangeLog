@@ -37,10 +37,15 @@ namespace ChangeLog.Core.Repositories
 			{
 				var database = GetDatabase(client);
 				var collection = GetCollection(client, database);
+				var requestOptions = new RequestOptions();
 
 				foreach (var commit in commits)
 				{
-					await client.CreateDocumentAsync(collection.DocumentsLink, new ChangeLogCommitDocument(commit));
+					await client.UpsertDocumentAsync(
+						collection.DocumentsLink,
+						new ChangeLogCommitDocument(commit),
+						requestOptions,
+						disableAutomaticIdGeneration: true);
 				}
 			}
 		}

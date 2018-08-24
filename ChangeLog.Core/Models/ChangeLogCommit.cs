@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using SemVer;
+using Newtonsoft.Json;
+using ChangeLog.Core.Utilities;
 
 namespace ChangeLog.Core.Models
 {
 	public class ChangeLogCommit
 	{
-		public ChangeLogCommit(PullRequest pullRequest, List<string> tags)
+		public ChangeLogCommit(PullRequest pullRequest, List<string> gitTags)
 		{
 			PullRequest = pullRequest;
-			Tags = tags.Select(t => new Version(t)).ToList();
+			Versions = gitTags.Select(t => new Version(t)).ToList();
 		}
 
-		public List<Version> Tags { get; }
+		[JsonProperty(ItemConverterType = typeof(VersionJsonConvertor))]
+		public List<Version> Versions { get; }
 
 		public PullRequest PullRequest { get; }
 	}

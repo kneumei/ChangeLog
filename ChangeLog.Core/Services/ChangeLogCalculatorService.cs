@@ -34,8 +34,8 @@ namespace ChangeLog.Core.Services
 			}
 
 			return _repository.GetAllCommits()
-				.Where(c => c.Tags.All(t => t > beginningVersion))
-				.Where(c => c.Tags.Any(t => t <= endingVersion))
+				.Where(c => c.Versions.All(t => t > beginningVersion))
+				.Where(c => c.Versions.Any(t => t <= endingVersion))
 				.ToList();
 		}
 	}
