@@ -99,7 +99,11 @@ namespace ChangeLog.Core.Tests.Services
 				Number = number,
 				Title = $"#{number}"
 			};
-			return new ChangeLogCommit(pr, versions.ToList());
+			return new ChangeLogCommit()
+			{
+				PullRequest = pr,
+				Versions = versions.Select(v => new SemVer.Version(v)).ToList()
+			};
 		}
 	}
 

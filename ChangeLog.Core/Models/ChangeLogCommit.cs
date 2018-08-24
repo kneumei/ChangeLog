@@ -8,15 +8,15 @@ namespace ChangeLog.Core.Models
 {
 	public class ChangeLogCommit
 	{
-		public ChangeLogCommit(PullRequest pullRequest, List<string> gitTags)
+
+		public ChangeLogCommit()
 		{
-			PullRequest = pullRequest;
-			Versions = gitTags.Select(t => new Version(t)).ToList();
+			//serializer
 		}
 
 		[JsonProperty(ItemConverterType = typeof(VersionJsonConvertor))]
-		public List<Version> Versions { get; }
+		public List<Version> Versions { get; set; }
 
-		public PullRequest PullRequest { get; }
+		public PullRequest PullRequest { get; set; }
 	}
 }

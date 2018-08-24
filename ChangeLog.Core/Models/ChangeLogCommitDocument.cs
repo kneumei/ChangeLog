@@ -1,7 +1,12 @@
+using Newtonsoft.Json;
+
 namespace ChangeLog.Core.Models
 {
 	public class ChangeLogCommitDocument
 	{
+
+		[JsonConstructor]
+		public ChangeLogCommitDocument() { }
 
 		public ChangeLogCommitDocument(ChangeLogCommit commit)
 		{
@@ -9,8 +14,8 @@ namespace ChangeLog.Core.Models
 			id = commit.PullRequest.Number.ToString();
 		}
 
-		public ChangeLogCommit ChangeLogCommit { get; }
-		public string id { get; }
+		public ChangeLogCommit ChangeLogCommit { get; set; }
+		public string id { get; set; }
 	}
 
 }

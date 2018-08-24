@@ -76,18 +76,24 @@ namespace ChangeLog.CLI
 			var repository = new DirectAccessChangeLogRepository(githubService, gitService);
 			var cosmos = new CosmosDbRepository(cosmosDbSettings);
 
-			await repository.Initialize();
+			// await repository.Initialize();
 
-			var changeLogCalculator = new ChangeLogCalculatorService(repository);
+			// var changeLogCalculator = new ChangeLogCalculatorService(repository);
 
-			var changeLogResults = await changeLogCalculator.CalculateChangeLogAsync(beginningVersion, endingVersion);
-			var changeLogs = new List<ChangeLogCommit>() { changeLogResults.First() };
-			foreach (var log in changeLogs)
+			// var changeLogResults = await changeLogCalculator.CalculateChangeLogAsync(beginningVersion, endingVersion);
+			// var changeLogs = new List<ChangeLogCommit>() { changeLogResults.First() };
+			// foreach (var log in changeLogs)
+			// {
+			// 	Console.WriteLine($"{log.PullRequest.Title} ({log.Versions.Min()})");
+
+			// }
+			// await cosmos.PersistAsync(changeLogs);
+
+			var allCommits = await cosmos.GetAllCommitsAsync();
+			foreach (var log in allCommits)
 			{
 				Console.WriteLine($"{log.PullRequest.Title} ({log.Versions.Min()})");
-
 			}
-			await cosmos.PersistAsync(changeLogs);
 		}
 
 		class MustBeSemanticVersionValidator : IOptionValidator

@@ -43,9 +43,15 @@ namespace ChangeLog.Core.Services
 					process.WaitForExit();
 
 					var tags = output.Split(Environment.NewLine.ToCharArray())
-						.Where(t => !String.IsNullOrWhiteSpace(t));
+						.Where(t => !String.IsNullOrWhiteSpace(t))
+						.Select(t => new SemVer.Version(t))
+						.ToList();
 
-					var commit = new ChangeLogCommit(pr, new List<string>(tags));
+					var commit = new ChangeLogCommit()
+					{
+						PullRequest = pr,
+						Versions = tags
+					};
 
 					commits.Add(commit);
 				};

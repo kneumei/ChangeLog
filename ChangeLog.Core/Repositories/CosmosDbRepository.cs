@@ -21,9 +21,21 @@ namespace ChangeLog.Core.Repositories
 			_settings = settings;
 		}
 
-		public Task<List<ChangeLogCommit>> GetAllCommitsAsync()
+		public async Task<List<ChangeLogCommit>> GetAllCommitsAsync()
 		{
-			throw new System.NotImplementedException();
+			using (var client = new DocumentClient(new Uri(_settings.CosmosDbUri), _settings.CosmosDbKey))
+			{
+				var database = GetDatabase(client);
+				var collection = GetCollection(client, database);
+				var requestOptions = new RequestOptions();
+
+				var docs = await client.ReadDocumentFeedAsync(collection.DocumentsLink);
+
+				return docs
+					.Select(d => ((ChangeLogCommitDocument)d))
+					.Select(d => d.ChangeLogCommit)
+					.ToList();
+			}
 		}
 
 		public Task<List<SemVer.Version>> GetAllVersionsAsync()
