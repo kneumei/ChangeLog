@@ -38,9 +38,14 @@ namespace ChangeLog.Core.Repositories
 			}
 		}
 
-		public Task<List<SemVer.Version>> GetAllVersionsAsync()
+		public async Task<List<SemVer.Version>> GetAllVersionsAsync()
 		{
-			throw new System.NotImplementedException();
+			var allCommits = await GetAllCommitsAsync();
+			return allCommits
+				.SelectMany(c => c.Versions)
+				.Distinct()
+				.ToList();
+
 		}
 
 		public async Task PersistAsync(List<ChangeLogCommit> commits)
