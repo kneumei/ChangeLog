@@ -33,7 +33,7 @@ namespace ChangeLog.Core.Repositories
 				var collection = GetCollection(client, database);
 				var requestOptions = new RequestOptions();
 
-				var docs = await client.ReadDocumentFeedAsync(collection.DocumentsLink);
+				var docs = await client.ReadDocumentFeedAsync(collection.DocumentsLink, new FeedOptions() { MaxItemCount = 400 });
 
 				return docs
 					.Select(d => ((ChangeLogCommitDocument)d))
