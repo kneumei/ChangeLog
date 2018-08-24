@@ -26,20 +26,20 @@ namespace ChangeLog.Core.Tests.Services
 		}
 
 		[Fact]
-		public void CalculateChangeLog_DoesNotIncludeBeginningTag()
+		public async Task CalculateChangeLog_DoesNotIncludeBeginningTag()
 		{
 			var versions = new string[][]{
 				new []{"1.0.0", "1.0.1", "1.1.0", "1.1.1"}
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1");
+			var changeLog = await _service.CalculateChangeLogAsync("1.0.0", "1.0.1");
 
 			Assert.Empty(changeLog);
 		}
 
 		[Fact]
-		public void CalculateChangeLog_IncludesNextPointRelease()
+		public async Task CalculateChangeLog_IncludesNextPointRelease()
 		{
 			var versions = new string[][]{
 				new []{"1.0.0", "1.0.1", "1.1.0", "1.1.1"},
@@ -47,13 +47,13 @@ namespace ChangeLog.Core.Tests.Services
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1");
+			var changeLog = await _service.CalculateChangeLogAsync("1.0.0", "1.0.1");
 
 			Assert.Equal(1001, changeLog.Single().PullRequest.Number);
 		}
 
 		[Fact]
-		public void CalculateChangeLog_DoesNotIncludeNextMajor()
+		public async Task CalculateChangeLog_DoesNotIncludeNextMajor()
 		{
 			var versions = new string[][]{
 				new []{"1.0.0", "1.0.1", "1.1.0", "1.1.1"},
@@ -62,13 +62,14 @@ namespace ChangeLog.Core.Tests.Services
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog("1.0.0", "1.0.1").Single();
+			var changeLogs = await _service.CalculateChangeLogAsync("1.0.0", "1.0.1");
+			var changeLog = changeLogs.Single();
 
 			Assert.Equal(1001, changeLog.PullRequest.Number);
 		}
 
 		[Fact]
-		public void CalculateChangeLog_IncludesIntermediate()
+		public async Task CalculateChangeLog_IncludesIntermediate()
 		{
 			var versions = new string[][]{
 				new []{"1.0.0", "1.0.1", "1.1.0", "1.1.1"},
@@ -78,7 +79,8 @@ namespace ChangeLog.Core.Tests.Services
 			};
 			_repository.Commits.AddRange(versions.Select(GenerateCommit).ToList());
 
-			var changeLog = _service.CalculateChangeLog("1.0.0", "1.1.1")
+			var changeLogs = await _service.CalculateChangeLogAsync("1.0.0", "1.1.1");
+			var changeLog = changeLogs
 				.OrderBy(c => c.PullRequest.Number)
 				.ToList();
 
@@ -106,14 +108,14 @@ namespace ChangeLog.Core.Tests.Services
 
 		public List<ChangeLogCommit> Commits = new List<ChangeLogCommit>();
 
-		public List<ChangeLogCommit> GetAllCommits()
+		public async Task<List<ChangeLogCommit>> GetAllCommitsAsync()
 		{
-			return Commits;
+			return await Task.FromResult(Commits);
 		}
 
-		public List<Version> GetAllVersions()
+		public async Task<List<Version>> GetAllVersionsAsync()
 		{
-			return Commits.SelectMany(c => c.Versions).Distinct().ToList();
+			return await Task.FromResult(Commits.SelectMany(c => c.Versions).Distinct().ToList());
 		}
 
 		public Task PersistAsync(List<ChangeLogCommit> commits)

@@ -21,12 +21,12 @@ namespace ChangeLog.Core.Repositories
 			_settings = settings;
 		}
 
-		public List<ChangeLogCommit> GetAllCommits()
+		public Task<List<ChangeLogCommit>> GetAllCommitsAsync()
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public List<SemVer.Version> GetAllVersions()
+		public Task<List<SemVer.Version>> GetAllVersionsAsync()
 		{
 			throw new System.NotImplementedException();
 		}

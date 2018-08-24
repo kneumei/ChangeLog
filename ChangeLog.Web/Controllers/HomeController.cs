@@ -6,6 +6,7 @@ using System.Linq;
 using SemVer;
 using System.Collections.Generic;
 using ChangeLog.Web.Models;
+using System.Threading.Tasks;
 
 namespace ChangeLog.Web.Controllers
 {
@@ -20,9 +21,10 @@ namespace ChangeLog.Web.Controllers
 			_repository = repository;
 		}
 
-		public IActionResult Index(string beginVersion, string endVersion)
+		public async Task<IActionResult> Index(string beginVersion, string endVersion)
 		{
-			var versions = _repository.GetAllVersions().OrderBy(v => v).ToList();
+			var versionResults = await _repository.GetAllVersionsAsync();
+			var versions = versionResults.OrderBy(v => v).ToList();
 			Version beginSemVer = null;
 			Version endSemVer = null;
 			var commits = new List<ChangeLogViewModel>();
@@ -39,8 +41,8 @@ namespace ChangeLog.Web.Controllers
 
 			if (beginSemVer != null && endSemVer != null)
 			{
-				commits = _calculatorService
-					.CalculateChangeLog(beginSemVer.ToString(), endSemVer.ToString())
+				var changeLogResults = await _calculatorService.CalculateChangeLogAsync(beginSemVer.ToString(), endSemVer.ToString());
+				commits = changeLogResults
 					.OrderByDescending(c => c.Versions.Min())
 					.Select(c => new ChangeLogViewModel()
 					{

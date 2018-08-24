@@ -28,22 +28,22 @@ namespace ChangeLog.Core.Repositories
 			_initialized = true;
 		}
 
-		public List<ChangeLogCommit> GetAllCommits()
+		public async Task<List<ChangeLogCommit>> GetAllCommitsAsync()
 		{
 			if (!_initialized)
 			{
 				throw new InvalidOperationException($"{nameof(DirectAccessChangeLogRepository)} has not been initialized");
 			}
-			return _commits;
+			return await Task.FromResult(_commits);
 		}
 
-		public List<SemVer.Version> GetAllVersions()
+		public async Task<List<SemVer.Version>> GetAllVersionsAsync()
 		{
 			if (!_initialized)
 			{
 				throw new InvalidOperationException($"{nameof(DirectAccessChangeLogRepository)} has not been initialized");
 			}
-			return _commits.SelectMany(c => c.Versions).Distinct().ToList();
+			return await Task.FromResult(_commits.SelectMany(c => c.Versions).Distinct().ToList());
 		}
 
 		public Task PersistAsync(List<ChangeLogCommit> commits)

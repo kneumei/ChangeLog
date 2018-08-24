@@ -80,8 +80,8 @@ namespace ChangeLog.CLI
 
 			var changeLogCalculator = new ChangeLogCalculatorService(repository);
 
-			var changeLog = changeLogCalculator.CalculateChangeLog(beginningVersion, endingVersion).First();
-			var changeLogs = new List<ChangeLogCommit>() { changeLog };
+			var changeLogResults = await changeLogCalculator.CalculateChangeLogAsync(beginningVersion, endingVersion);
+			var changeLogs = new List<ChangeLogCommit>() { changeLogResults.First() };
 			foreach (var log in changeLogs)
 			{
 				Console.WriteLine($"{log.PullRequest.Title} ({log.Versions.Min()})");

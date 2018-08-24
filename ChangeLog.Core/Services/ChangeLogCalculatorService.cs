@@ -4,13 +4,14 @@ using System.Linq;
 using ChangeLog.Core.Models;
 using ChangeLog.Core.Repositories;
 using SemVer;
+using System.Threading.Tasks;
 
 namespace ChangeLog.Core.Services
 {
 
 	public interface IChangeLogCalculatorService
 	{
-		List<ChangeLogCommit> CalculateChangeLog(string beginningVersion, string endingVersion);
+		Task<List<ChangeLogCommit>> CalculateChangeLogAsync(string beginningVersion, string endingVersion);
 	}
 
 	public class ChangeLogCalculatorService : IChangeLogCalculatorService
@@ -23,7 +24,7 @@ namespace ChangeLog.Core.Services
 
 		private readonly IChangeLogRepository _repository;
 
-		public List<ChangeLogCommit> CalculateChangeLog(string beginningVersionString, string endingVersionString)
+		public async Task<List<ChangeLogCommit>> CalculateChangeLogAsync(string beginningVersionString, string endingVersionString)
 		{
 			var beginningVersion = new SemVer.Version(beginningVersionString);
 			var endingVersion = new SemVer.Version(endingVersionString);
@@ -33,7 +34,8 @@ namespace ChangeLog.Core.Services
 				throw new ArgumentException($"{nameof(beginningVersion)} ({beginningVersion}) greater than {nameof(endingVersion)} ({endingVersion})");
 			}
 
-			return _repository.GetAllCommits()
+			var allCommits = await _repository.GetAllCommitsAsync();
+			return allCommits
 				.Where(c => c.Versions.All(t => t > beginningVersion))
 				.Where(c => c.Versions.Any(t => t <= endingVersion))
 				.ToList();

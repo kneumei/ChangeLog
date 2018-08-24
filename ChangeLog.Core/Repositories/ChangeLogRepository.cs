@@ -7,8 +7,8 @@ namespace ChangeLog.Core.Repositories
 {
 	public interface IChangeLogRepository
 	{
-		List<ChangeLogCommit> GetAllCommits();
-		List<Version> GetAllVersions();
+		Task<List<ChangeLogCommit>> GetAllCommitsAsync();
+		Task<List<Version>> GetAllVersionsAsync();
 		Task PersistAsync(List<ChangeLogCommit> commits);
 	}
 }
