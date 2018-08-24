@@ -27,11 +27,8 @@ namespace ChangeLog.Web
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc();
-			services.Configure<GithubSettings>(Configuration);
-			services.Configure<GitSettings>(Configuration);
-			services.AddTransient<IGitService, GitService>();
-			services.AddTransient<IGithubService, GithubService>();
-			services.AddSingleton<IChangeLogRepository, DirectAccessChangeLogRepository>();
+			services.Configure<CosmosDbSettings>(Configuration);
+			services.AddSingleton<IChangeLogRepository, CosmosDbRepository>();
 			services.AddTransient<IChangeLogCalculatorService, ChangeLogCalculatorService>();
 
 		}

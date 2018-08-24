@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Azure.Documents;
+using Microsoft.Extensions.Options;
 
 namespace ChangeLog.Core.Repositories
 {
@@ -16,6 +17,9 @@ namespace ChangeLog.Core.Repositories
 		public CosmosDbSettings _settings;
 
 
+		public CosmosDbRepository(IOptions<CosmosDbSettings> settings) : this(settings.Value)
+		{
+		}
 		public CosmosDbRepository(CosmosDbSettings settings)
 		{
 			_settings = settings;
