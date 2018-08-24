@@ -42,15 +42,12 @@ namespace ChangeLog.CLI
 
 			var app = new CommandLineApplication();
 			app.HelpOption(inherited: true);
-			app.Command("load", loadCommand =>
-			{
-				loadCommand.Description = "Load Pull Requests into Data Store";
-			});
 
 			var showCommand = new ShowCommand(cosmoDbRepository, directAccessRepository);
+			var loadCommand = new LoadCommand(cosmoDbRepository, directAccessRepository);
 
 			app.Command("show", showCommand.Configure);
-
+			app.Command("load", loadCommand.Configure);
 
 			app.OnExecute(() =>
 			{
