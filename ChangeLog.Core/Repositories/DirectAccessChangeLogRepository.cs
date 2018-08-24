@@ -8,7 +8,7 @@ using System;
 
 namespace ChangeLog.Core.Repositories
 {
-	public class DirectAccessChangeLogRepository : IChangeLogRepository
+	public class DirectAccessChangeLogRepository : IChangeLogRepository, IInitializeable
 	{
 		private readonly List<ChangeLogCommit> _commits = new List<ChangeLogCommit>();
 		private readonly IGithubService _githubService;
@@ -21,7 +21,7 @@ namespace ChangeLog.Core.Repositories
 			_gitService = gitService;
 		}
 
-		public async Task Initialize()
+		public async Task InitializeAsync()
 		{
 			var prs = await _githubService.GetPullRequests();
 			_commits.AddRange(_gitService.GetChangeLogCommits(prs));

@@ -21,7 +21,7 @@ public class InitializeRepositoryMiddleware
 		var startRegistration = default(CancellationTokenRegistration);
 		startRegistration = lifetime.ApplicationStarted.Register(() =>
 		{
-			if (_chageLogRepository is DirectAccessChangeLogRepository)
+			if (_chageLogRepository is IInitializeable)
 			{
 				_initializationTask = InitializeAsync(lifetime.ApplicationStopping);
 			}
@@ -37,7 +37,7 @@ public class InitializeRepositoryMiddleware
 	private async Task InitializeAsync(CancellationToken cancellationToken)
 	{
 		var repo = _chageLogRepository as DirectAccessChangeLogRepository;
-		await repo.Initialize();
+		await repo.InitializeAsync();
 	}
 
 	public async Task Invoke(HttpContext context)

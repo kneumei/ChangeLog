@@ -11,4 +11,9 @@ namespace ChangeLog.Core.Repositories
 		Task<List<Version>> GetAllVersionsAsync();
 		Task PersistAsync(List<ChangeLogCommit> commits);
 	}
+
+	public interface IInitializeable
+	{
+		Task InitializeAsync();
+	}
 }
