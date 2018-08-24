@@ -5,6 +5,7 @@ using ChangeLog.Core.Models;
 using SemVer;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChangeLog.Core.Tests.Services
 {
@@ -113,6 +114,11 @@ namespace ChangeLog.Core.Tests.Services
 		public List<Version> GetAllVersions()
 		{
 			return Commits.SelectMany(c => c.Tags).Distinct().ToList();
+		}
+
+		public Task PersistAsync(List<ChangeLogCommit> commits)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

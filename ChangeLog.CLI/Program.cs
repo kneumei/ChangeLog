@@ -33,6 +33,9 @@ namespace ChangeLog.CLI
 			var gitSettings = new GitSettings();
 			configuration.Bind(gitSettings);
 
+			var cosmosDbSettings = new CosmosDbSettings();
+			configuration.Bind(cosmosDbSettings);
+
 			var app = new CommandLineApplication();
 			app.HelpOption();
 			var beginningVersionArg = app.Option(
@@ -53,7 +56,7 @@ namespace ChangeLog.CLI
 			{
 				var beginningVersion = beginningVersionArg.Value();
 				var endingVersion = endingVersionArg.Value();
-				await RunAsync(githubSettings, gitSettings, beginningVersion, endingVersion);
+				await RunAsync(githubSettings, gitSettings, cosmosDbSettings, beginningVersion, endingVersion);
 				return 0;
 			});
 
@@ -63,6 +66,7 @@ namespace ChangeLog.CLI
 		private static async Task RunAsync(
 			GithubSettings githubSettings,
 			GitSettings gitSettings,
+			CosmosDbSettings cosmosDbSettings,
 			string beginningVersion,
 			string endingVersion)
 		{
@@ -70,16 +74,20 @@ namespace ChangeLog.CLI
 			var githubService = new GithubService(githubSettings);
 			var gitService = new GitService(gitSettings);
 			var repository = new DirectAccessChangeLogRepository(githubService, gitService);
+			var cosmos = new CosmosDbRepository(cosmosDbSettings);
 
 			await repository.Initialize();
 
 			var changeLogCalculator = new ChangeLogCalculatorService(repository);
 
-			var changeLogs = changeLogCalculator.CalculateChangeLog(beginningVersion, endingVersion);
+			var changeLog = changeLogCalculator.CalculateChangeLog(beginningVersion, endingVersion).First();
+			var changeLogs = new List<ChangeLogCommit>() { changeLog };
 			foreach (var log in changeLogs)
 			{
 				Console.WriteLine($"{log.PullRequest.Title} ({log.Tags.Min()})");
+
 			}
+			await cosmos.PersistAsync(changeLogs);
 		}
 
 		class MustBeSemanticVersionValidator : IOptionValidator

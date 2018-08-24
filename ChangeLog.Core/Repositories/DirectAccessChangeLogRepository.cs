@@ -45,5 +45,10 @@ namespace ChangeLog.Core.Repositories
 			}
 			return _commits.SelectMany(c => c.Tags).Distinct().ToList();
 		}
+
+		public Task PersistAsync(List<ChangeLogCommit> commits)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
