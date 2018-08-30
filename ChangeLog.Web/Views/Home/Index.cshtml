@@ -18,22 +18,51 @@
 <h1>Galileo Change Log @versionRange</h1>
 <hr>
 
-<form action="/" method="get">
-   <input name="beginVersion" type="text" value="@Model.BeginVersion?.ToString()" />
-   <input name="endVersion" type="text" value="@Model.EndVersion?.ToString()" />
-   <input type="submit" id="submit" value="Submit" />
+<form action="/" method="get" >
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="beginVersion">Current Version</label>
+            <input id= "beginVersion" class = "form-control" name="beginVersion" type="text" value="@Model.BeginVersion?.ToString()" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="endVersion">Target Version</label>
+            <input id= "endVersion" name="endVersion" class = "form-control" type="text" value="@Model.EndVersion?.ToString()" />
+         </div>
+		<div class="form-group col-md-2">
+			<label for="button">&nbsp;</label>
+			<input id ="button" class="btn btn-primary form-control" type="submit" id="submit" value="Submit" />
+		</div>
+     </div>
 </form>
+<br/>
+
 
 @if(rangeSpecified){
 	var versionGroups = Model.Commits
 		.GroupBy(c => c.Version);
 	var versionKeys = versionGroups.Select(g => g.Key).OrderByDescending(v => v);
+
 	@foreach(var version in versionKeys){
-	<h2>@version.ToString()</h2>
-	<ul>
-		@foreach(var pr in versionGroups.Single(g => g.Key == version)){
-			<li><a href="@pr.Url">#@pr.PullRequestNumber</a> (@pr.Author) - @pr.Title</li>
+		var categoryGroups = @versionGroups
+			.Single(g => g.Key == version)
+			.GroupBy(c => c.Category);
+		var categoryKeys = @categoryGroups.Select(c => c.Key).OrderBy(c => c);
+
+		<div class="card">
+		<div class="card-header">@version.ToString()</div>
+		<div class="card-body">
+
+		@foreach(var category in categoryKeys){
+			<h5 class="card-title">@category.ToString()</h5>
+			<ul class="list-unstyled">
+			@foreach(var pr in categoryGroups.Single(c => c.Key == category)){
+				<li ><a href="@pr.Url">#@pr.PullRequestNumber</a> (@pr.Author) - @pr.Title</li>
+			}
+			</ul>
 		}
-	</ul>
-}
+
+		</div>
+		</div>
+		<br>
+	}
 }

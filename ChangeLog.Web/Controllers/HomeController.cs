@@ -50,7 +50,8 @@ namespace ChangeLog.Web.Controllers
 						Title = c.PullRequest.Title,
 						Author = c.PullRequest.User.Login,
 						PullRequestNumber = c.PullRequest.Number.ToString(),
-						Url = c.PullRequest.Url
+						Url = c.PullRequest.Url,
+						Category = c.PullRequest.Labels.FirstOrDefault()?.Name ?? "Other"
 					})
 					.ToList();
 

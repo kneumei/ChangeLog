@@ -9,6 +9,7 @@ namespace ChangeLog.Web.Models
 		public string Author { get; set; }
 		public string Url { get; set; }
 		public string PullRequestNumber { get; set; }
+		public string Category { get; set; }
 
 	}
 }

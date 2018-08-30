@@ -9,5 +9,7 @@ namespace ChangeLog.Core.Models
 	{
 		[DataMember(Name = "name")]
 		public string Name { get; set; }
+		[DataMember(Name = "color")]
+		public string Color { get; set; }
 	}
 }
