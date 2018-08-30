@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Options;
+using Microsoft.Azure.Documents.Linq;
 
 namespace ChangeLog.Core.Repositories
 {
@@ -31,14 +32,20 @@ namespace ChangeLog.Core.Repositories
 			{
 				var database = GetDatabase(client);
 				var collection = GetCollection(client, database);
-				var requestOptions = new RequestOptions();
+				var feedOptions = new FeedOptions() { MaxItemCount = 30 };
+				const string query = "SELECT * FROM PullRequests p ORDER BY p.ChangeLogCommit.PullRequest.merged_at DESC";
+				var documentUri = UriFactory.CreateDocumentCollectionUri(database.Id, collection.Id);
+				var changeLogCommitDocuments = new List<ChangeLogCommitDocument>();
 
-				var docs = await client.ReadDocumentFeedAsync(collection.DocumentsLink, new FeedOptions() { MaxItemCount = 400 });
+				var documentQuery = client.CreateDocumentQuery<ChangeLogCommitDocument>(documentUri, query, feedOptions).AsDocumentQuery();
 
-				return docs
-					.Select(d => ((ChangeLogCommitDocument)d))
-					.Select(d => d.ChangeLogCommit)
-					.ToList();
+				while (documentQuery.HasMoreResults)
+				{
+					var documents = await documentQuery.ExecuteNextAsync<ChangeLogCommitDocument>();
+					changeLogCommitDocuments.AddRange(documents);
+				}
+
+				return changeLogCommitDocuments.Select(d => d.ChangeLogCommit).ToList();
 			}
 		}
 
