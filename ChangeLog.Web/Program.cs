@@ -19,6 +19,10 @@ namespace ChangeLog.Web
 
 		public static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
+				.ConfigureAppConfiguration((buildContext, config) =>
+				{
+					config.AddJsonFile(@"C:\Program Files\Amazon\ElasticBeanstalk\config\containerconfiguration", optional: true, reloadOnChange: true);
+				})
 				.UseStartup<Startup>()
 				.Build();
 	}
