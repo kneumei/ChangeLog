@@ -336,3 +336,4 @@ ASALocalRun/
 .vscode/
 
 ChangeLog.Web/site
+ChangeLog.Web/wwwroot/vendor/*

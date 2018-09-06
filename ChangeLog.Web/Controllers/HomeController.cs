@@ -57,10 +57,15 @@ namespace ChangeLog.Web.Controllers
 
 			}
 
+			var allVersions = versions
+				.OrderByDescending(v => v)
+				.Select(v => v.ToString())
+				.ToList();
+
 			var model = new HomeViewModel()
 			{
 				Commits = commits,
-				AllVersions = versions,
+				AllVersions = allVersions,
 				BeginVersion = beginSemVer,
 				EndVersion = endSemVer
 			};

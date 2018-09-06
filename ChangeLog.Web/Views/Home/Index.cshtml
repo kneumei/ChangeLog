@@ -12,27 +12,51 @@
 		versionRange= $"{Model.BeginVersion.ToString()} - {Model.EndVersion.ToString()}";
 	}
 	ViewData["Title"] = title;
-	 
+	<div data-marker=@Html.Raw(Json.Serialize(Model.AllVersions))></div>
 }
 
 <h1 class="text-center">Galileo Change Log</h1>
 <hr>
 
 <form action="/" method="get" >
-    <div class="form-row">
-        <div class="form-group col-md-5">
-            <label for="beginVersion">Current Version</label>
-            <input id= "beginVersion" class = "form-control" name="beginVersion" type="text" value="@Model.BeginVersion?.ToString()" />
-        </div>
-        <div class="form-group col-md-5">
-            <label for="endVersion">Target Version</label>
-            <input id= "endVersion" name="endVersion" class = "form-control" type="text" value="@Model.EndVersion?.ToString()" />
-         </div>
+	<div class="form-row">
+		<div class="form-group col-md-5">
+			<label for="beginVersion">Current Version</label>
+			<div class="typeahead__container">
+				<div class="typeahead__field">
+					<div class="typeahead__query">
+						<input 
+							id = "beginVersion" 
+							class = "form-control" 
+							name="beginVersion" 
+							type="search" 
+							value="@Model.BeginVersion?.ToString()"
+							autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group col-md-5">
+			<label for="endVersion">Target Version</label>
+			<div class="typeahead__container">
+				<div class="typeahead__field">
+					<div class="typeahead__query">
+						<input 
+							id= "endVersion" 
+							name="endVersion" 
+							class = "form-control" 
+							type="search" 
+							value="@Model.EndVersion?.ToString()" 
+							autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+		 </div>
 		<div class="form-group col-md-2">
 			<label for="button">&nbsp;</label>
 			<input id ="button" class="btn btn-primary form-control" type="submit" id="submit" value="Submit" />
 		</div>
-     </div>
+	 </div>
 </form>
 <br/>
 

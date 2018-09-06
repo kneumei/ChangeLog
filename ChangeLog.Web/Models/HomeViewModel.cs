@@ -8,7 +8,7 @@ namespace ChangeLog.Web.Models
 	{
 
 		public List<ChangeLogViewModel> Commits { get; set; }
-		public List<Version> AllVersions { get; set; }
+		public List<string> AllVersions { get; set; }
 		public Version BeginVersion { get; set; }
 		public Version EndVersion { get; set; }
 
