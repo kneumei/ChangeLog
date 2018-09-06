@@ -56,6 +56,21 @@ namespace ChangeLog.Web.Controllers
 					.ToList();
 
 			}
+			else if (versions.Count >= 2)
+			{
+				var mostRecentRelease = versions.Last();
+				var lastMinorRelease = versions.Last(x => x.Patch == 0);
+				if (mostRecentRelease == lastMinorRelease)
+				{
+					lastMinorRelease = versions.Where(v => v != mostRecentRelease).OrderBy(v => v).Last(x => x.Patch == 0);
+				}
+
+				return RedirectToAction("Index", new
+				{
+					beginVersion = lastMinorRelease.ToString(),
+					endVersion = mostRecentRelease.ToString()
+				});
+			}
 
 			var allVersions = versions
 				.OrderByDescending(v => v)
